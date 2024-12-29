@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:web_socket_channel/io.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'dart:async';
+// import 'package:web_socket_channel/io.dart';
+// import 'package:flutter_hooks/flutter_hooks.dart';
+// import 'dart:async';
 
 
 
@@ -18,32 +18,26 @@ class Messenger extends StatefulWidget {
   State<Messenger> createState() => _MessengerState();
 }
 
-  List<List<dynamic>> messages = [['salam',false,2], ['salam-aleikum', true,4], ['how u?', false,7]];
+  List<List<dynamic>> messages = [];
 
 class _MessengerState extends State<Messenger> {
   
+  void initState() {
+    super.initState();
+    addMessage();
+    print('ghgh');
+  }
+
   TextEditingController _controller = TextEditingController();
 
 
   @override
   Widget build(BuildContext context) {
 
-      // final streamController = StreamController.broadcast();
-      // streamController.addStream(widget.channel.stream);
-
-    // streamController.stream.listen(
-    //     (data) {
-    //       print(data);
-    //       // setState(() {
-    //       //   messages.add([data, false, 5]);
-    //       // });
-    //       // messages.add([_controller.text, true, 5]));
-    //     },
-    //     onError: (error) => print(error),
-    //   );
-
     return MaterialApp(
       home: Scaffold(
+        // backgroundColor: Color.fromARGB(0, 255, 255, 255),
+        // drawerScrimColor: Color.fromARGB(0, 255, 255, 255),
         appBar: AppBar(
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -72,7 +66,6 @@ class _MessengerState extends State<Messenger> {
         //   child: Icon(Icons.arrow_back),
         // ),
         bottomSheet: Container(
-          margin: EdgeInsets.only(left: 15, right: 15),
           child: TextField(
             decoration: InputDecoration(
               hintText: 'data', 
@@ -130,9 +123,11 @@ class _MessengerState extends State<Messenger> {
     );
   }
   void addMessage() {
-    widget.channel.sink.add(_controller.text);
-    setState(()=>messages.add([_controller.text, true, 5]));
-    _controller.clear();
+    if (_controller.text.isNotEmpty){
+      widget.channel.sink.add(_controller.text);
+      setState(()=>messages.add([_controller.text, true, 5]));
+      _controller.clear();
+    }
     widget.channel.stream.listen(
         (data) {
           // print(data);

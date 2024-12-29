@@ -1,5 +1,6 @@
 import { WebSocketServer } from 'ws';
 import url from 'url';
+import { log } from 'console';
 // const url = require('url');
 
 
@@ -11,22 +12,33 @@ const clients = {};
 
 wss.on('connection', function connection(ws, req) {
   // console.log( req.headers['sec-websocket-key']);
-  clients[url.parse(req.url, true).query.from] = ws
-  
-  console.log(url.parse(req.url, true).query.from);
-  console.log(url.parse(req.url, true).query.to);
+  if (url.parse(req.url, true).path=='/get_users') {
+    ws.send(JSON.stringify(Object.keys(clients)))
+    console.log('в чате: '+JSON.stringify(Object.keys(clients)));
+    
+  } else {
+    clients[url.parse(req.url, true).query.from] = ws
+    console.log(url.parse(req.url, true).query.from);
+    console.log(url.parse(req.url, true).query.to);
+  }
   
   
   ws.on('message', (message) => {
     console.log(`Получено сообщение: ${message}`)
-    // console.log(clients);
+    console.log();
     clients[url.parse(req.url, true).query.to].send(String(message));
     
   });
   
 
   ws.on('close', () => {
-    console.log('close');
+    for (const [key, value] of Object.entries(clients)) {
+      if (clients[key]==ws) {
+        delete clients[key];
+        console.log(key+' close');
+        break;
+      }
+    }
     
     // clients.splice(clients.indexOf(ws), 1); // Убираем клиента из списка при отключении
   });

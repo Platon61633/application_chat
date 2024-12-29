@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 // import 'secondRoute.dart';
 import 'registration.dart';
-import 'messenger.dart';
+// import 'messenger.dart';
 
 // function to trigger build when the app is run
 void main() {
